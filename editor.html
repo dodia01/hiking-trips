@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editor – Hiking Trips</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="editor.css" />
+  </head>
+  <body class="editor-page">
+    <header class="editor-header">
+      <div class="editor-header__inner">
+        <h1 class="editor-header__title">Trip editor</h1>
+        <a href="index.html" class="editor-header__close">Close editor mode</a>
+      </div>
+    </header>
+
+    <main class="editor-main">
+      <section class="editor-section editor-trips">
+        <h2 class="editor-section__title">Trip</h2>
+        <div class="editor-trips__row">
+          <div id="editor-trip-pills" class="editor-trip-pills"></div>
+          <div class="editor-trips__actions">
+            <button type="button" id="editor-add-trip" class="editor-btn editor-btn--dashed">+ Add trip</button>
+            <button type="button" id="editor-remove-trip" class="editor-btn">Remove trip</button>
+            <button type="button" id="editor-rename-trip" class="editor-btn">Rename trip</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="editor-section editor-days">
+        <h2 class="editor-section__title">Days</h2>
+        <div id="editor-days-panel" class="editor-days-panel">
+          <button type="button" id="editor-add-day" class="editor-add-day-btn">+ Add day</button>
+          <div id="editor-days-list" class="editor-days-list"></div>
+        </div>
+      </section>
+
+      <section class="editor-section editor-actions">
+        <button type="button" id="editor-save" class="editor-btn editor-btn--primary">Save</button>
+        <button type="button" id="editor-discard" class="editor-btn">Discard</button>
+      </section>
+    </main>
+
+    <aside id="editor-detail-panel" class="editor-detail-panel" aria-hidden="true">
+      <div class="editor-detail-panel__backdrop" id="editor-detail-backdrop"></div>
+      <div class="editor-detail-panel__content">
+        <button type="button" class="editor-detail-panel__close" id="editor-detail-close" aria-label="Close">×</button>
+        <h3 class="editor-detail-panel__title">Activity</h3>
+        <div id="editor-detail-form" class="editor-detail-form"></div>
+      </div>
+    </aside>
+
+    <script src="app.js"></script>
+    <script src="editor.js"></script>
+  </body>
+</html>

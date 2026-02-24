@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hiking Trips</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <h1 id="app-title">Hiking Trips</h1>
+          <p id="trip-subtitle" class="site-header__subtitle"></p>
+        </div>
+        <div id="trip-selector" class="trip-selector" role="tablist" aria-label="Select trip"></div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="timeline-section">
+        <h2 class="section-title">Plan at a glance</h2>
+        <div id="day-tabs" class="day-tabs-wrap"></div>
+        <!-- Timeline tag style: default = compact chip. Try "timeline timeline--tag-dot" or "timeline timeline--tag-border" for other options. -->
+        <div id="timeline" class="timeline"></div>
+      </section>
+
+      <section class="details-section">
+        <h2 class="section-title">Details by activity</h2>
+        <div id="details" class="details"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <small id="trip-footer-note">
+        Click any activity above to jump to its full details.
+      </small>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+

@@ -1,0 +1,10 @@
+{
+  "name": "trip-itinerary-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reusable static website for visualising trip itineraries (timeline + details with Strava and Google Maps embeds).",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}
+
