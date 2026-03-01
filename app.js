@@ -1009,12 +1009,22 @@ function init() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  loadConfigFromFirebase().then(function () {
+/** Proceed after Firebase load or after a timeout (so editor works locally / when Firebase is slow or blocked). */
+var FIREBASE_LOAD_TIMEOUT_MS = 5000;
+
+function whenConfigReady() {
+  var timeoutPromise = new Promise(function (resolve) {
+    setTimeout(resolve, FIREBASE_LOAD_TIMEOUT_MS);
+  });
+  Promise.race([loadConfigFromFirebase(), timeoutPromise]).then(function () {
     if (document.getElementById('trip-selector')) {
       init();
     } else if (document.getElementById('editor-trip-pills')) {
       window.dispatchEvent(new CustomEvent('appConfigReady'));
     }
   });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  whenConfigReady();
 });
