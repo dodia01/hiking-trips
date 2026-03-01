@@ -831,6 +831,9 @@
       window.appConfig.appTitle = editorData.appTitle;
       window.appConfig.trips = editorData.trips;
     }
+    if (typeof window.saveConfigToFirebase === 'function') {
+      window.saveConfigToFirebase({ appTitle: editorData.appTitle, trips: editorData.trips });
+    }
   }
 
   function discard() {
@@ -898,9 +901,26 @@
     }
   }
 
+  function onReady() {
+    function runInit() {
+      init();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('appConfigReady', function handler() {
+        document.removeEventListener('appConfigReady', handler);
+        runInit();
+      });
+    } else {
+      document.addEventListener('appConfigReady', function handler() {
+        document.removeEventListener('appConfigReady', handler);
+        runInit();
+      });
+    }
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', onReady);
   } else {
-    init();
+    onReady();
   }
 })();
