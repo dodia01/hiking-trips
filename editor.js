@@ -902,20 +902,21 @@
   }
 
   function onReady() {
-    function runInit() {
-      init();
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('appConfigReady', function handler() {
-        document.removeEventListener('appConfigReady', handler);
-        runInit();
-      });
-    } else {
-      document.addEventListener('appConfigReady', function handler() {
-        document.removeEventListener('appConfigReady', handler);
-        runInit();
-      });
-    }
+    // Start editor after a short delay so app.js has set window.appConfig (works locally and on web).
+    setTimeout(init, 50);
+    // When Firebase load completes later, refresh editor data so web users see Firebase content.
+    window.addEventListener('appConfigReady', function refreshFromFirebase() {
+      window.removeEventListener('appConfigReady', refreshFromFirebase);
+      var loaded = getData();
+      if (loaded && loaded.trips && Array.isArray(loaded.trips) && loaded.trips.length > 0) {
+        editorData = loaded;
+        if (!editorData.trips.find(function (t) { return t.id === selectedTripId; })) {
+          selectedTripId = editorData.trips[0].id;
+        }
+        renderTripPills();
+        renderDaysPanel();
+      }
+    });
   }
 
   if (document.readyState === 'loading') {
