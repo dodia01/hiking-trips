@@ -1,3 +1,26 @@
+// Firebase – Realtime Database (trip data + comments structure for Plan C)
+const firebaseConfig = {
+  apiKey: 'AIzaSyAB3WqrRz1_-eyfauRGjSRFx5JktSB5wmg',
+  authDomain: 'hiking-trips-697b7.firebaseapp.com',
+  databaseURL: 'https://hiking-trips-697b7-default-rtdb.europe-west1.firebasedatabase.app',
+  projectId: 'hiking-trips-697b7',
+  storageBucket: 'hiking-trips-697b7.firebasestorage.app',
+  messagingSenderId: '768486377693',
+  appId: '1:768486377693:web:770340507994a994fef334',
+};
+
+const FIREBASE_DATA_PATH = 'data';
+const FIREBASE_CONFIG_KEY = 'config';
+const FIREBASE_COMMENTS_KEY = 'comments';
+
+let firebaseDb = null;
+if (typeof firebase !== 'undefined') {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    firebaseDb = firebase.database();
+  } catch (e) {}
+}
+
 const appConfig = {
   appTitle: 'Hiking Trips',
   trips: [
@@ -290,6 +313,46 @@ const STORAGE_KEY_SELECTED_TRIP = 'hiking-trips-selected-trip';
 })();
 if (typeof window !== 'undefined') window.appConfig = appConfig;
 
+/** Load trip config from Firebase and merge into appConfig. Resolves when done (with or without data). */
+function loadConfigFromFirebase() {
+  return new Promise(function (resolve) {
+    if (!firebaseDb) {
+      resolve();
+      return;
+    }
+    firebaseDb.ref(FIREBASE_DATA_PATH + '/' + FIREBASE_CONFIG_KEY).once('value').then(
+      function (snapshot) {
+        const val = snapshot.val();
+        if (val && val.appTitle != null) appConfig.appTitle = val.appTitle;
+        if (val && Array.isArray(val.trips) && val.trips.length > 0) appConfig.trips = val.trips;
+        resolve();
+      },
+      function () {
+        resolve();
+      }
+    );
+  });
+}
+
+/**
+ * Save trip config to Firebase. Preserves existing comments (Plan C). Call with { appTitle, trips }.
+ */
+function saveConfigToFirebase(payload) {
+  if (!firebaseDb) return Promise.resolve();
+  var dataRef = firebaseDb.ref(FIREBASE_DATA_PATH);
+  return dataRef.once('value').then(function (snapshot) {
+    var existing = snapshot.val() || {};
+    var comments = existing[FIREBASE_COMMENTS_KEY];
+    if (comments === undefined) comments = {};
+    var update = {};
+    update[FIREBASE_CONFIG_KEY] = { appTitle: payload.appTitle, trips: payload.trips };
+    update[FIREBASE_COMMENTS_KEY] = comments;
+    return dataRef.set(update);
+  });
+}
+
+window.saveConfigToFirebase = saveConfigToFirebase;
+
 function getSelectedTrip() {
   const id = localStorage.getItem(STORAGE_KEY_SELECTED_TRIP) || appConfig.trips[0]?.id;
   return appConfig.trips.find((t) => t.id === id) || appConfig.trips[0];
@@ -319,11 +382,7 @@ function renderTripSelector(trips, selectedTripId) {
     pillsWrap.appendChild(btn);
   });
   container.appendChild(pillsWrap);
-  const editorLink = document.createElement('a');
-  editorLink.href = 'editor.html';
-  editorLink.className = 'trip-selector__editor-btn';
-  editorLink.textContent = 'Editor';
-  container.appendChild(editorLink);
+  // Editor link removed (Step B: editor URL kept private)
 }
 
 const TYPE_LABELS = {
@@ -951,5 +1010,11 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  if (document.getElementById('trip-selector')) init();
+  loadConfigFromFirebase().then(function () {
+    if (document.getElementById('trip-selector')) {
+      init();
+    } else if (document.getElementById('editor-trip-pills')) {
+      window.dispatchEvent(new CustomEvent('appConfigReady'));
+    }
+  });
 });
